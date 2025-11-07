@@ -18,6 +18,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import StartScreen from './src/components/StartScreen';
 import { Game } from './src/components/Game';
 import { AIGame } from './src/components/AIGame';
+import SettingsScreen from './src/components/SettingsScreen';
+import SplashScreen from './src/components/SplashScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,10 +33,12 @@ function App() {
           <SafeAreaProvider>
             <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
             <NavigationContainer>
-              <Stack.Navigator initialRouteName="StartScreen" screenOptions={{ headerShown: false }}>
+              <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Splash" component={SplashScreen} />
                 <Stack.Screen name="StartScreen" component={StartScreen} />
                 <Stack.Screen name="Game" component={Game} />
                 <Stack.Screen name="AIGame" component={AIGame} />
+                <Stack.Screen name="Settings" component={SettingsScreen} />
               </Stack.Navigator>
             </NavigationContainer>
           </SafeAreaProvider>
