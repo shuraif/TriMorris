@@ -4,7 +4,6 @@ import { Modal } from 'react-native';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Settings, HelpCircle, Users, Bot } from 'lucide-react-native';
-import { SettingsModal } from './SettingsModal';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { THEMES } from '../store/settingsSlice';
 
@@ -217,7 +216,6 @@ interface StartScreenProps {
 }
 
 const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
-  const [settingsVisible, setSettingsVisible] = useState(false);
   const [howToPlayVisible, setHowToPlayVisible] = useState(false);
   const dispatch = useAppDispatch();
   const themeId = useAppSelector(state => state.settings.theme.id);
@@ -229,7 +227,6 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      <SettingsModal visible={settingsVisible} onDismiss={() => setSettingsVisible(false)} />
   
   <View style={{ alignItems: 'center', marginTop: 20,width:'100%' }}>
      <Text style={styles.title}>TriMorris</Text>
@@ -316,7 +313,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
       <TouchableOpacity
         style={styles.button}
         activeOpacity={0.95}
-        onPress={() => setSettingsVisible(true)}
+        onPress={() => navigation.navigate('Settings')}
       >
         <LinearGradient
           colors={theme.colors.button}
