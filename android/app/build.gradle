@@ -95,8 +95,8 @@ android {
         applicationId "com.ei.trimorris"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 22
-        versionName "1.22"
+        versionCode 23
+        versionName "1.1"
 
         // Enable multidex for development
         //multiDexEnabled true
