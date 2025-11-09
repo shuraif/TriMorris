@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 40,
   },
   container: {
     flex: 1,
@@ -329,7 +330,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
       </TouchableOpacity>
     </View>
     {/* How to Play Button at Bottom */}
-    <View style={{ position: 'absolute', bottom: 32, left: 0, right: 0, alignItems: 'center' }}>
+    <View style={{ position: 'absolute', bottom: 60, left: 0, right: 0, alignItems: 'center' }}>
       <TouchableOpacity
         style={styles.button}
         activeOpacity={0.95}
