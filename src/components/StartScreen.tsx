@@ -6,211 +6,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Settings, HelpCircle, Users, Bot } from 'lucide-react-native';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { THEMES } from '../store/settingsSlice';
+import { DemoBoard } from './DemoBoard';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
-// DemoBoard: Simple animated demo for How to Play modal
-function DemoBoard() {
-  const [step, setStep] = React.useState(0);
-  React.useEffect(() => {
-    if (step < 6) {
-      const timer = setTimeout(() => setStep(step + 1), 700);
-      return () => clearTimeout(timer);
-    }
-  }, [step]);
-  // Junction positions (corners, midpoints, center)
-  const junctions = [
-    { x: 10, y: 10 },   // top-left
-    { x: 60, y: 10 },   // top-mid
-    { x: 110, y: 10 },  // top-right
-    { x: 10, y: 60 },   // mid-left
-    { x: 60, y: 60 },   // center
-    { x: 110, y: 60 },  // mid-right
-    { x: 10, y: 110 },  // bottom-left
-    { x: 60, y: 110 },  // bottom-mid
-    { x: 110, y: 110 }, // bottom-right
-  ];
-  // Demo token animation: alternate placement, then movement to win
-  const tokens = Array(9).fill(null);
-  // Placement phase: alternate, no line
-  // Movement phase: move P1 token to form a line
-  // Indices: 0=TL, 2=TR, 3=ML, 4=C, 6=BL, 8=BR
-  const demoOrder = [
-    { player: 'P1', index: 4 }, // P1 top-left
-    { player: 'P2', index: 2 }, // P2 top-right
-    { player: 'P1', index: 0 }, // P1 center
-    { player: 'P2', index: 6 }, // P2 bottom-left
-    { player: 'P1', index: 5 }, // P1 bottom-right (no line yet)
-    { player: 'P2', index: 3 }, // P2 mid-left
-  ];
 
-  for (let i = 0; i <= step; i++) {
-    if (step < 6) {
-      tokens[demoOrder[i].index] = demoOrder[i].player;
-    } else {
-      // After placement, animate movement
-      tokens[0] = 'P1'; // P1 moves to top-mid
-      tokens[4] = 'P1'; // P1 center
-      tokens[8] = 'P1'; // P1 bottom-right
-      tokens[2] = 'P2'; // P2 top-right
-      tokens[3] = 'P2'; // P2 mid-left
-      tokens[6] = 'P2'; // P2 bottom-left
-    }
-    
-  }
-  
-
-  return (
-    <View style={{ width: 120, height: 120, alignItems: 'center', justifyContent: 'center', marginVertical: 8 }}>
-      {/* Board background and lines */}
-      <View style={{ position: 'absolute', width: 120, height: 120, borderRadius: 0, borderWidth: 2, borderColor: '#FFD700', backgroundColor: '#1E1A78' }}>
-        {/* Outer square is handled by border */}
-        {/* Vertical line - extend to touch borders */}
-        <View style={{ position: 'absolute', left: 60, top: -2, width: 2, height: 120, backgroundColor: '#FFD700', borderRadius: 1 }} />
-        {/* Horizontal line - extend to touch borders */}
-        <View style={{ position: 'absolute', top: 60, left: -2, height: 2, width: 120, backgroundColor: '#FFD700', borderRadius: 1 }} />
-        {/* Diagonal lines connecting corners (precise placement) */}
-        <View style={{ position: 'absolute', left: 0, top: 0, width: 120, height: 120, pointerEvents: 'none' }}>
-          {/* Top-left to bottom-right */}
-          <View style={{ position: 'absolute', right: 60, top: -25, width: 2, height: 166, backgroundColor: '#FFD700', borderRadius: 1, transform: [{ rotate: '45deg' }], }} />
-          {/* Top-right to bottom-left */}
-          <View style={{ position: 'absolute', left: 56, top: -25, width: 2, height: 166, backgroundColor: '#FFD700', borderRadius: 1, transform: [{ rotate: '-45deg' }], }} />
-        </View>
-      </View>
-      {/* Tokens on junctions */}
-      {tokens.map((t, i) => (
-        t ? (
-          <View
-            key={i}
-            style={{
-              position: 'absolute',
-              left: junctions[i].x - 11,
-              top: junctions[i].y - 11,
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              backgroundColor: t === 'P1' ? '#44A08D' : '#FF6B6B',
-              borderWidth: 2,
-              borderColor: '#FFD700',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          />
-        ) : null
-      ))}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 40,
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: 'bold',
-    color: '#FFD700',
-    textShadowColor: '#FF6B6B',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 12,
-    marginBottom: 10,
-    letterSpacing: 2,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 22,
-    color: '#B8860B',
-    fontWeight: '600',
-    marginBottom: 24,
-    textAlign: 'center',
-  },
-  descriptionBox: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 32,
-    borderWidth: 2,
-    borderColor: '#FFD700',
-    width: width > 400 ? 360 : '100%',
-    shadowColor: '#B8860B',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-  },
-  description: {
-    color: '#FFF',
-    fontSize: 16,
-    textAlign: 'center',
-    fontWeight: '400',
-    lineHeight: 22,
-  },
-  button: {
-    width: width > 400 ? 260 : '90%',
-    borderRadius: 12,
-    marginVertical: 12,
-    overflow: 'hidden',
-    elevation: 4,
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-  },
-  buttonGradient: {
-    paddingVertical: 18,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 22,
-    fontWeight: '700',
-    letterSpacing: 1,
-  },
-  settingsButton: {
-    position: 'absolute',
-    top: 32,
-    right: 32,
-    zIndex: 10,
-    elevation: 8,
-    borderRadius: 20,
-    overflow: 'hidden',
-  },
-  settingsButtonGradient: {
-    padding: 10,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 6,
-  },
-  footerBox: {
-    marginTop: 40,
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: 'rgba(139,69,19,0.3)',
-  },
-  footerText: {
-    color: '#FFD700',
-    fontSize: 14,
-    textAlign: 'center',
-    fontWeight: '500',
-    letterSpacing: 1,
-  },
-});
 
 interface StartScreenProps {
   navigation: any;
@@ -221,10 +22,11 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const themeId = useAppSelector(state => state.settings.theme.id);
   const theme = THEMES.find(t => t.id === themeId) || THEMES[0];
+  const insets = useSafeAreaInsets()
   return (
     <LinearGradient
       colors={theme.colors.background}
-      style={styles.background}
+      style={[styles.background, { paddingTop: insets.top, paddingBottom: insets.bottom }]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
@@ -359,5 +161,115 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
     </LinearGradient>
   );
 };
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 40,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 24,
+  },
+  title: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#FFD700',
+    textShadowColor: '#FF6B6B',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 12,
+    marginBottom: 10,
+    letterSpacing: 2,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 22,
+    color: '#B8860B',
+    fontWeight: '600',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  descriptionBox: {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 32,
+    borderWidth: 2,
+    borderColor: '#FFD700',
+    width: width > 400 ? 360 : '100%',
+    shadowColor: '#B8860B',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  description: {
+    color: '#FFF',
+    fontSize: 16,
+    textAlign: 'center',
+    fontWeight: '400',
+    lineHeight: 22,
+  },
+  button: {
+    width: width > 400 ? 260 : '90%',
+    borderRadius: 12,
+    marginVertical: 12,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+  },
+  buttonGradient: {
+    paddingVertical: 18,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    color: '#FFF',
+    fontSize: 22,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  settingsButton: {
+    position: 'absolute',
+    top: 32,
+    right: 32,
+    zIndex: 10,
+    elevation: 8,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  settingsButtonGradient: {
+    padding: 10,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#FFD700',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 6,
+  },
+  footerBox: {
+    marginTop: 40,
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: 'rgba(139,69,19,0.3)',
+  },
+  footerText: {
+    color: '#FFD700',
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: '500',
+    letterSpacing: 1,
+  },
+});
 
 export default StartScreen;
