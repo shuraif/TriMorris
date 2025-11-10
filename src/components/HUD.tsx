@@ -4,6 +4,7 @@ import { RotateCcw, Play, Sparkles, Zap, Volume2, VolumeX } from 'lucide-react-n
 import LinearGradient from 'react-native-linear-gradient';
 import { PLAYER_COLORS } from '../constants/gameConstants';
 import { useAppSelector } from '../store/hooks';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface HUDProps {
   currentPlayer: string;
@@ -40,12 +41,13 @@ export const HUD: React.FC<HUDProps> = ({
   const theme = settings.theme;
   const player1Color = settings.player1.color;
   const player2Color = settings.player2.color;
+  const insets = useSafeAreaInsets()
 
   return (
     <>
     <LinearGradient
       colors={theme.colors.background}
-      style={styles.container}
+      style={[styles.container,{ paddingTop: insets.top, paddingBottom: insets.bottom }]}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 1}}
     >

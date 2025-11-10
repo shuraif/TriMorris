@@ -23,6 +23,7 @@ import {
   THEMES,
 } from '../store/settingsSlice';
 import { X, Palette, Users, Volume2, Vibrate, Zap, RotateCcw } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SettingsScreen: React.FC<any> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ const SettingsScreen: React.FC<any> = ({ navigation }) => {
   const [selectedRounds, setSelectedRounds] = useState(settings.roundsPerGame.toString());
   const [selectedAnimationSpeed, setSelectedAnimationSpeed] = useState(settings.animationSpeed);
   const [selectedBoardSize, setSelectedBoardSize] = useState(settings.boardSize || 'small');
+  const insets = useSafeAreaInsets()
 
   // Auto-save theme and player names
   React.useEffect(() => {
@@ -95,7 +97,7 @@ const SettingsScreen: React.FC<any> = ({ navigation }) => {
   return (
     <LinearGradient
       colors={currentTheme.colors.background}
-      style={styles.background}
+      style={[styles.background,{ paddingTop: insets.top, paddingBottom: insets.bottom }]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
