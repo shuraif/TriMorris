@@ -183,6 +183,7 @@ export const AIGame: React.FC = () => {
         onNextRound={() => { dispatch(nextRound()); SoundManager.play('gameStart', settings.soundEnabled); }}
         soundEnabled={settings.soundEnabled}
         onToggleSound={() => dispatch(setSoundEnabled(!settings.soundEnabled))}
+        isAIGame={true}
       >
         <Board
           tokens={gameState.tokens}
