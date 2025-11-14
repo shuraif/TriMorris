@@ -1,16 +1,19 @@
 
 import React, { useState } from 'react';
 import { Modal } from 'react-native';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Linking, Alert } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { Settings, HelpCircle, Users, Bot } from 'lucide-react-native';
+import { Settings, HelpCircle, Users, Bot, Github, Info } from 'lucide-react-native';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { THEMES } from '../store/settingsSlice';
 import { DemoBoard } from './DemoBoard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const { width } = Dimensions.get('window');
+import {
+  Button,
+} from 'react-native-paper';
 
+const { width } = Dimensions.get('window');
 
 
 interface StartScreenProps {
@@ -19,10 +22,14 @@ interface StartScreenProps {
 
 const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
   const [howToPlayVisible, setHowToPlayVisible] = useState(false);
+  const [aboutVisible, setAboutVisible] = useState(false);
   const dispatch = useAppDispatch();
   const themeId = useAppSelector(state => state.settings.theme.id);
   const theme = THEMES.find(t => t.id === themeId) || THEMES[0];
   const insets = useSafeAreaInsets()
+  const settings = useAppSelector((state) => state.settings);
+  const [selectedTheme, setSelectedTheme] = useState(settings.theme.id);
+  const currentTheme = THEMES.find(theme => theme.id === selectedTheme) || THEMES[0];
   return (
     <LinearGradient
       colors={theme.colors.background}
@@ -74,8 +81,77 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
         </View>
       </View>
     </Modal>
+
+    {/* About Modal */}
+    <Modal
+      visible={aboutVisible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={() => setAboutVisible(false)}
+    >
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background[2] + 'CC' }}>
+        <View style={{ width: width > 400 ? 360 : '90%', backgroundColor: theme.colors.background[1], borderRadius: 18, padding: 30, borderWidth: 2, borderColor: theme.colors.accent, shadowColor: theme.colors.accent, shadowOpacity: 0.3, shadowRadius: 12 }}>
+          <Text style={{ fontSize: 28, fontWeight: 'bold', color: theme.colors.accent, textAlign: 'center', marginBottom: 12 }}>About TriMorris</Text>
+          
+          <Text style={{ color: theme.colors.text, fontSize: 16, marginBottom: 18, textAlign: 'center', lineHeight: 22 }}>
+            A modern take on the classic Three Men's Morris strategy game, built with React Native and love for timeless gameplay.
+          </Text>
+
+          <View style={{ alignItems: 'center', marginBottom: 20 }}>
+            <Text style={{ color: theme.colors.accent, fontWeight: 'bold', fontSize: 16, marginBottom: 8 }}>Version</Text>
+            <Text style={{ color: theme.colors.text, fontSize: 14, marginBottom: 16 }}>1.3.0</Text>
+
+            <Text style={{ color: theme.colors.accent, fontWeight: 'bold', fontSize: 16, marginBottom: 8 }}>Open Source</Text>
+            <Text style={{ color: theme.colors.text, fontSize: 14, textAlign: 'center', marginBottom: 16, lineHeight: 20 }}>
+              This app is built with transparency and love. The complete source code is available on GitHub for everyone to explore, learn from, and contribute to.
+            </Text>
+
+            <Button
+                mode="outlined"
+                onPress={() => {
+                  const url = 'https://github.com/shuraif/TriMorris';
+                  
+                  // Simple approach - just try to open the URL directly
+                  Linking.openURL(url).catch(() => {
+                    // If it fails, show the fallback alert
+                    Alert.alert(
+                      'Open GitHub Repository',
+                      'Please visit our GitHub repository:\n\nhttps://github.com/shuraif/TriMorris\n\n⭐ Star the repo if you like the app!',
+                      [
+                        { text: 'Cancel', style: 'cancel' },
+                        { 
+                          text: 'Copy Link', 
+                          onPress: () => {
+                            // You could implement Clipboard.setString here if needed
+                            Alert.alert('Info', 'Please copy this link: https://github.com/shuraif/TriMorris');
+                          }
+                        }
+                      ]
+                    );
+                  });
+                }}
+                style={[styles.githubButton, { borderColor: currentTheme.colors.accent }]}
+                labelStyle={{ color: currentTheme.colors.accent, fontSize: 14 }}
+                icon={({ size, color }) => <Github size={size} color={color} />}
+              >
+                View Source Code
+          </Button>
+
+            
+          </View>
+
+          <TouchableOpacity
+            style={{ alignSelf: 'center', marginTop: 8, backgroundColor: theme.colors.accent, borderRadius: 10, paddingVertical: 10, paddingHorizontal: 32 }}
+            onPress={() => setAboutVisible(false)}
+          >
+            <Text style={{ color: theme.colors.background[1], fontWeight: 'bold', fontSize: 18 }}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+
     {/* Main Action Buttons - grouped for better UI/UX */}
-    <View style={{ width: '100%', alignItems: 'center', marginTop: 8 }}>
+    <View style={{ width: '100%', justifyContent: 'center',alignItems:'center', marginTop: 8,flex:4 }}>
   {/* Multiplayer */}
       <TouchableOpacity
         style={styles.button}
@@ -108,7 +184,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
             <Bot size={22} color="#FFF" style={{ marginRight: 10 }} />
-            <Text style={styles.buttonText}>Play with System</Text>
+            <Text style={styles.buttonText}>Play with Bot</Text>
           </View>
         </LinearGradient>
       </TouchableOpacity>
@@ -131,10 +207,11 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
         </LinearGradient>
       </TouchableOpacity>
     </View>
-    {/* How to Play Button at Bottom */}
-    <View style={{ position: 'absolute', bottom: 60, left: 0, right: 0, alignItems: 'center' }}>
+    {/* Bottom Buttons */}
+    <View>
+      {/* How to Play Button */}
       <TouchableOpacity
-        style={styles.button}
+        style={[styles.button, { marginBottom: 10 }]}
         activeOpacity={0.95}
         onPress={() => {
           setHowToPlayVisible(true);
@@ -148,15 +225,36 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
           end={{ x: 1, y: 1 }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-            <HelpCircle size={22} color="#FFF" style={{ marginRight: 10 }} />
+            <HelpCircle size={20} color="#FFF" style={{ marginRight: 8 }} />
             <Text style={styles.buttonText}>How to Play</Text>
           </View>
         </LinearGradient>
       </TouchableOpacity>
+
+      {/* About Button */}
+      <TouchableOpacity
+        style={styles.button}
+        activeOpacity={0.95}
+        onPress={() => setAboutVisible(true)}
+      >
+        <LinearGradient
+          colors={theme.colors.button}
+          style={styles.buttonGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Info size={20} color="#FFF" style={{ marginRight: 8 }} />
+            <Text style={styles.buttonText}>About</Text>
+          </View>
+        </LinearGradient>
+      </TouchableOpacity>
+
     </View>
     {/* <View style={styles.footerBox}>
       <Text style={styles.footerText}>© 2025 Retro Board Games</Text>
     </View> */}
+    
   </View>
     </LinearGradient>
   );
@@ -238,6 +336,30 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 1,
   },
+  secondaryButton: {
+    width: width > 400 ? 260 : '90%',
+    borderRadius: 12,
+    marginVertical: 12,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#666',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+  },
+  secondaryButtonGradient: {
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  secondaryButtonText: {
+    color: '#FFF',
+    fontSize: 18,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
   settingsButton: {
     position: 'absolute',
     top: 32,
@@ -269,6 +391,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
     letterSpacing: 1,
+  },
+   githubButton: {
+    marginBottom: 8,
+  },
+  githubUrl: {
+    fontSize: 12,
+    textAlign: 'center',
+    opacity: 0.8,
+    fontFamily: 'monospace',
   },
 });
 

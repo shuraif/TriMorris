@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Alert } from 'react-native';
+import { StyleSheet, View, ScrollView, Alert, Linking } from 'react-native';
 import {
   Text,
   Button,
@@ -22,7 +22,7 @@ import {
   resetSettings,
   THEMES,
 } from '../store/settingsSlice';
-import { X, Palette, Users, Volume2, Vibrate, Zap, RotateCcw } from 'lucide-react-native';
+import { X, Palette, Users, Volume2, Vibrate, Zap, RotateCcw, Github } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SettingsScreen: React.FC<any> = ({ navigation }) => {
@@ -234,6 +234,53 @@ const SettingsScreen: React.FC<any> = ({ navigation }) => {
             <Switch value={settings.vibrationEnabled} onValueChange={(value) => { dispatch(setVibrationEnabled(value)); }} color={currentTheme.colors.accent} />
           </View>
         </View>
+        <Divider style={[styles.divider, { backgroundColor: currentTheme.colors.border }]} />
+        {/* Open Source */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.openSourceIcon, { color: currentTheme.colors.accent }]}>🔓</Text>
+            <Text style={[styles.sectionTitle, { color: currentTheme.colors.text }]}>Open Source</Text>
+          </View>
+          <View style={[styles.openSourceContainer, { backgroundColor: `${currentTheme.colors.accent}15`, borderColor: `${currentTheme.colors.accent}30` }]}>
+            <Text style={[styles.openSourceTitle, { color: currentTheme.colors.text }]}>TriMorris is Open Source!</Text>
+            <Text style={[styles.openSourceDescription, { color: currentTheme.colors.text }]}>
+              This app is built with love and transparency. The complete source code is available on GitHub for everyone to explore, learn from, and contribute to.
+            </Text>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                const url = 'https://github.com/shuraif/TriMorris';
+                
+                // Simple approach - just try to open the URL directly
+                Linking.openURL(url).catch(() => {
+                  // If it fails, show the fallback alert
+                  Alert.alert(
+                    'Open GitHub Repository',
+                    'Please visit our GitHub repository:\n\nhttps://github.com/shuraif/TriMorris\n\n⭐ Star the repo if you like the app!',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      { 
+                        text: 'Copy Link', 
+                        onPress: () => {
+                          // You could implement Clipboard.setString here if needed
+                          Alert.alert('Info', 'Please copy this link: https://github.com/shuraif/TriMorris');
+                        }
+                      }
+                    ]
+                  );
+                });
+              }}
+              style={[styles.githubButton, { borderColor: currentTheme.colors.accent }]}
+              labelStyle={{ color: currentTheme.colors.accent, fontSize: 14 }}
+              icon={({ size, color }) => <Github size={size} color={color} />}
+            >
+              View Source Code
+            </Button>
+            <Text style={[styles.githubUrl, { color: currentTheme.colors.accent }]}>
+              github.com/shuraif/TriMorris
+            </Text>
+          </View>
+        </View>
       </ScrollView>
       {/* Footer removed for cleaner UI */}
     </LinearGradient>
@@ -367,6 +414,36 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     flex: 1,
+  },
+  openSourceIcon: {
+    fontSize: 20,
+    marginRight: 8,
+  },
+  openSourceContainer: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginTop: 8,
+  },
+  openSourceTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  openSourceDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 16,
+    opacity: 0.9,
+  },
+  githubButton: {
+    marginBottom: 8,
+  },
+  githubUrl: {
+    fontSize: 12,
+    textAlign: 'center',
+    opacity: 0.8,
+    fontFamily: 'monospace',
   },
 });
 

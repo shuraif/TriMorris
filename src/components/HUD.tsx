@@ -19,6 +19,7 @@ interface HUDProps {
   onNextRound: () => void;
   onToggleSound?: () => void;
   soundEnabled?: boolean;
+  isAIGame?: boolean;
 }
 
 export const HUD: React.FC<HUDProps> = ({
@@ -34,6 +35,7 @@ export const HUD: React.FC<HUDProps> = ({
   onNextRound,
   onToggleSound,
   soundEnabled,
+  isAIGame = false,
 }) => {
   const settings = useAppSelector((state) => state.settings);
   
@@ -114,7 +116,7 @@ export const HUD: React.FC<HUDProps> = ({
             end={{x: 1, y: 1}}
           >
             <Text style={styles.winnerText}>
-              🏆 {matchWinner === '1' ? settings.player1.name : settings.player2.name} Wins the Match! 🏆
+              🏆 {matchWinner === '1' ? settings.player1.name : (isAIGame ? 'System' : settings.player2.name)} Wins the Match! 🏆
             </Text>
             <View style={styles.scoreDisplay}>
               <View style={styles.scoreSection}>
@@ -135,7 +137,7 @@ export const HUD: React.FC<HUDProps> = ({
               </View>
               <Text style={styles.vsText}>VS</Text>
               <View style={styles.scoreSection}>
-                <Text style={styles.scoreLabel}>{settings.player2.name}</Text>
+                <Text style={styles.scoreLabel}>{isAIGame ? 'System' : settings.player2.name}</Text>
                 <View style={styles.scoreIndicators}>
                   {Array.from({ length: settings.roundsPerGame }, (_, index) => (
                     <View
@@ -185,7 +187,7 @@ export const HUD: React.FC<HUDProps> = ({
         >
           <View style={styles.playerInfo}>
             <Text style={styles.scoreNumber}>{score.player2}/{settings.roundsPerGame}</Text>
-            <Text style={styles.playerLabel}>{settings.player2.name}</Text>
+            <Text style={styles.playerLabel}>{isAIGame ? 'System' : settings.player2.name}</Text>
             <View style={styles.tokenDisplay}>
               {Array.from({ length: 3 }, (_, index) => (
                 <View
