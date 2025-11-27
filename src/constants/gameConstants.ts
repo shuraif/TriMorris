@@ -1,6 +1,6 @@
 export const BOARD_SIZE = 320;
-export const JUNCTION_RADIUS = 12; // Reduced from 16 to 12
-export const TOKEN_RADIUS = 18; // Increased from 13 to 18
+export const JUNCTION_RADIUS = 16;
+export const TOKEN_RADIUS = 22;
 
 export const PLAYER_COLORS = {
   PLAYER1: '#4A90E2',
