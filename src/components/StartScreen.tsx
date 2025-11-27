@@ -99,7 +99,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
 
           <View style={{ alignItems: 'center', marginBottom: 20 }}>
             <Text style={{ color: theme.colors.accent, fontWeight: 'bold', fontSize: 16, marginBottom: 8 }}>Version</Text>
-            <Text style={{ color: theme.colors.text, fontSize: 14, marginBottom: 16 }}>1.3.0</Text>
+            <Text style={{ color: theme.colors.text, fontSize: 14, marginBottom: 16 }}>1.6.0</Text>
 
             <Text style={{ color: theme.colors.accent, fontWeight: 'bold', fontSize: 16, marginBottom: 8 }}>Open Source</Text>
             <Text style={{ color: theme.colors.text, fontSize: 14, textAlign: 'center', marginBottom: 16, lineHeight: 20 }}>
