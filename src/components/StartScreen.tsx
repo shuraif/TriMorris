@@ -208,7 +208,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
       </TouchableOpacity>
     </View>
     {/* Bottom Buttons */}
-    
+    <View style={{ width: '100%', justifyContent: 'center',alignItems:'center', marginTop: 8,flex:1}}>
       {/* How to Play Button */}
       <TouchableOpacity
         style={[styles.button, { marginBottom: 10 }]}
@@ -249,8 +249,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
           </View>
         </LinearGradient>
       </TouchableOpacity>
-
-    
+    </View>
     {/* <View style={styles.footerBox}>
       <Text style={styles.footerText}>© 2025 Retro Board Games</Text>
     </View> */}
