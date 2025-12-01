@@ -208,7 +208,7 @@ const StartScreen: React.FC<StartScreenProps> = ({ navigation }) => {
       </TouchableOpacity>
     </View>
     {/* Bottom Buttons */}
-    <View style={{ width: '100%', justifyContent: 'center',alignItems:'center', marginTop: 8,flex:1}}>
+    <View style={{ width: '100%', justifyContent: 'center',alignItems:'center', marginTop: 8,flex:2}}>
       {/* How to Play Button */}
       <TouchableOpacity
         style={[styles.button, { marginBottom: 10 }]}
